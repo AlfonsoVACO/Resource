@@ -1,0 +1,190 @@
+import java.awt.event.ActionEvent;
+import java.util.Arrays;
+import static java.util.logging.Logger.getLogger;
+import javax.swing.GroupLayout;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
+import javax.swing.WindowConstants;
+
+/**
+ *
+ * @author B91735
+ */
+public class EstadisticaBasica extends JFrame {
+
+    private final JButton execute = new JButton();
+    private final JButton cliean = new JButton();
+    private final JLabel lblMark = new JLabel();
+    private final JScrollPane resize = new JScrollPane();
+    private final JTextArea resultado = new JTextArea();
+    private final JTextField tamanio = new JTextField();
+    private double total = 0;
+    private int totalModa = 0;
+    private int vecesModa = 0;
+
+    public EstadisticaBasica() {
+        setProperties();
+        init();
+    }
+
+    public static void main(String[] rgs) {
+        try {
+            for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex) {
+            getLogger(EstadisticaBasica.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+        java.awt.EventQueue.invokeLater(() -> {
+            new EstadisticaBasica().setVisible(true);
+        });
+
+    }
+
+    private Integer[] llenarArreglo(int tamanioArr) {
+        Integer[] arregloUnidimensional = new Integer[tamanioArr];
+        int tamanioinp = 0;
+        do {
+            String input = JOptionPane.showInputDialog(null, "Ingrega un número entero", "Ingreso de datos", JOptionPane.INFORMATION_MESSAGE);
+            if (isInteger(input)) {
+                arregloUnidimensional[tamanioinp] = Integer.parseInt(input);
+                tamanioinp++;
+            }
+        } while (tamanioinp < arregloUnidimensional.length);
+        return arregloUnidimensional;
+    }
+
+    private boolean isInteger(String value) {
+        try {
+            Integer.parseInt(value);
+        } catch (NumberFormatException ex) {
+            return false;
+        }
+        return true;
+    }
+
+    private void imprimirArreglo(Integer[] arreglo) {
+        StringBuilder builder = new StringBuilder();
+        Arrays.asList(arreglo).forEach(numero -> builder.append("#").append(numero).append("\n"));
+        resultado.setText(builder.toString());
+    }
+
+    private void imprimirMedia(Integer[] media) {
+        Arrays.asList(media).forEach(numero -> total += numero);
+        resultado.setText(resultado.getText() + "\n\nMedia: " + (total / media.length));
+    }
+
+    private void imprimirMediana(Integer[] mediana) {
+        int posicion = mediana.length % 2;
+        if (posicion == 0) {
+            int div = mediana.length / 2;
+            resultado.setText(resultado.getText() + "\n\nMediana: " + (mediana[div] + mediana[div + 1]) / 2);
+        }
+        if (posicion == 1) {
+            int div = (mediana.length + 1) / 2;
+            resultado.setText(resultado.getText() + "\n\nMediana: " + mediana[div - 1]);
+        }
+    }
+
+    private void imprimirModa(Integer[] moda) {
+        StringBuilder builder = new StringBuilder();
+        Arrays.asList(moda).forEach(numero -> {
+            vecesModa = 0;
+            Arrays.asList(moda).forEach(numerosub -> {
+                if (numero.equals(numerosub)) {
+                    vecesModa++;
+                }
+            });
+            if (vecesModa > totalModa) {
+                totalModa = vecesModa;
+                builder.append("\n").append("Moda #").append(numero).append(" => ").append(totalModa);
+            }
+        });
+        resultado.setText(resultado.getText() + "\n\n" + builder.toString());
+    }
+
+    private void executeButton(ActionEvent event) {
+        if (!tamanio.getText().isEmpty() && isInteger(tamanio.getText())) {
+            int tamanioArr = Integer.parseInt(tamanio.getText());
+            if (tamanioArr < 50 && tamanioArr > 0) {
+                Integer[] arreglo = llenarArreglo(tamanioArr);
+                imprimirArreglo(arreglo);
+                imprimirMedia(arreglo);
+                imprimirMediana(arreglo);
+                imprimirModa(arreglo);
+            } else {
+                JOptionPane.showMessageDialog(null, "El tamaño debe de ser mayor a 0 y menor a 50", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        } else {
+            JOptionPane.showMessageDialog(null, "El campo texto no debe de estar vacío", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+
+    }
+
+    private void clean(ActionEvent ev) {
+        tamanio.setText("");
+        resultado.setText("");
+    }
+
+    private void setProperties() {
+        tamanio.setText("");
+        lblMark.setText("Tamaño de arreglo");
+        execute.setText("Ejecutar");
+        cliean.setText("Limpiar");
+        execute.addActionListener((ActionEvent evt) -> {
+            executeButton(evt);
+        });
+        cliean.addActionListener((ActionEvent evt) -> {
+            clean(evt);
+        });
+        resultado.setColumns(20);
+        resultado.setRows(5);
+        resize.setViewportView(resultado);
+    }
+
+    private void init() {
+        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        GroupLayout layout = new GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+                layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createSequentialGroup()
+                                .addGap(24, 24, 24)
+                                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                                        .addComponent(resize, GroupLayout.PREFERRED_SIZE, 400, GroupLayout.PREFERRED_SIZE)
+                                        .addGroup(layout.createSequentialGroup()
+                                                .addComponent(lblMark)
+                                                .addGap(18, 18, 18)
+                                                .addComponent(tamanio, GroupLayout.PREFERRED_SIZE, 80, GroupLayout.PREFERRED_SIZE)
+                                                .addGap(18, 18, 18)
+                                                .addComponent(execute)
+                                                .addComponent(cliean)))
+                                .addContainerGap(82, Short.MAX_VALUE))
+        );
+        layout.setVerticalGroup(
+                layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createSequentialGroup()
+                                .addContainerGap()
+                                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                        .addComponent(tamanio, GroupLayout.PREFERRED_SIZE, 30, GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(lblMark)
+                                        .addComponent(execute)
+                                        .addComponent(cliean))
+                                .addGap(18, 18, 18)
+                                .addComponent(resize, GroupLayout.PREFERRED_SIZE, 600, GroupLayout.PREFERRED_SIZE)
+                                .addContainerGap(102, Short.MAX_VALUE))
+        );
+        pack();
+    }
+}
