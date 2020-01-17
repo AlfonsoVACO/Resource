@@ -15,6 +15,7 @@ import org.bson.Document;
 import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.codecs.pojo.PojoCodecProvider;
 import org.bson.conversions.Bson;
+import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
 import java.text.MessageFormat;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 
 import static org.bson.codecs.configuration.CodecRegistries.fromProviders;
@@ -83,7 +86,7 @@ public class UserDao extends AbstractMFlixDao {
 		session.append("user_id", userId);
 		session.append("jwt", jwt);
 		sessionsCollection.insertOne(session);
-		return false;
+		return true;
 		// TODO > Ticket: Handling Errors - implement a safeguard against
 		// creating a session with the same jwt token.
 	}
@@ -156,8 +159,28 @@ public class UserDao extends AbstractMFlixDao {
 		// be updated.
 		// TODO > Ticket: Handling Errors - make this method more robust by
 		// handling potential exceptions when updating an entry.
-		Bson query = new Document("email", "email");
+		/*Bson query = new Document("email", "email");
+		User user = usersCollection.find(query).iterator().tryNext();
+		Map<String,String> nuevos_valores = new HashMap<String, String>();
+		if(user.getPreferences() != null && !user.getPreferences().isEmpty()) {
+			Map<String,String> mapa = user.getPreferences();
+			mapa.forEach( (key, value) ->{
+				if(userPreferences.containsKey(key)) {
+					mapa.replace(key, mapa.get(key), (String) userPreferences.get(key));
+				}else {
+					nuevos_valores.put(key, (String) userPreferences.get(key));
+				}
+			} );
+			mapa.putAll(nuevos_valores);
+			UpdateResult resultUpdate = usersCollection.updateOne(query, set("preferences", mapa));
+			return resultUpdate.getModifiedCount() > 0;
+		}
 		UpdateResult resultUpdate = usersCollection.updateOne(query, set("preferences", userPreferences));
-		return resultUpdate.getModifiedCount() > 0;
+		return resultUpdate.getModifiedCount() > 0;*/
+		Bson filter = new Document("email", email);
+		Bson newValue = new Document("preferences", userPreferences);
+		Bson updateOperationDocument = new Document("$set", newValue);
+		UpdateResult resultUpdate = usersCollection.updateOne(filter, updateOperationDocument);
+		return resultUpdate.getModifiedCount() >0;
 	}
 }
