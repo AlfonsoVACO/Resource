@@ -76,9 +76,15 @@ public class MovieDao extends AbstractMFlixDao {
 		 }}
 		])
      * */
+    /*Arrays.asList(match(eq("_id", 
+    new ObjectId("573a1390f29313caabcd41b1"))), lookup("comments", "_id", "movie_id", "comments"), 
+    sort(descending("date")))
+     * */
     Bson look = Aggregates.lookup("comments", "_id", "movie_id", "comment");
+    Bson sort = Sorts.descending("date");
     pipeline.add(match);
     pipeline.add(look);
+    pipeline.add(sort);
     // TODO> Ticket: Get Comments - implement the lookup stage that allows the comments to
     // retrieved with Movies.
     Document movie = moviesCollection.aggregate(pipeline).first();
@@ -132,8 +138,8 @@ public class MovieDao extends AbstractMFlixDao {
    * @return List of matching Document objects.
    */
 	public List<Document> getMoviesByCountry(String... country) {
-
-		Bson queryFilter = new Document("$all", new Document("country", country));
+		Bson queryFilter = Filters.in("countries", country);
+		//Bson queryFilter = new Document("$all", new Document("countries", country));
 		Bson projection = new Document("title", 1);
 		// TODO> Ticket: Projection - implement the query and projection required by the
 		// unit test
