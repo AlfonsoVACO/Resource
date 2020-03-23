@@ -2,3 +2,36 @@ data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQND
 
 
 https://github.com/picodotdev/blog-ejemplos
+
+
+
+
+
+$me=Alfonso;
+$chat=YALO;
+$hora=false;
+$intentos=3;
+$celular=5525694553;
+$firmaDigital=e7xtEkO4wFM54xm-ccgbfw;
+$request1=_celular,_cuentaDestino;
+$request2=_celular,concepto,destinatario->apellidoMaterno|apellidoPaterno|claveDestino|_cuenta|nombre,firmaDigital,latitud,longitud,_monto,referencia;
+#[output|saludo]>"¡Hola! 👋🏻 /&&/ Soy Olivia, tu Asesora Digital de Banco Azteca. Te doy la bienvenida. 🙋🏻‍♀";
+#[output|saludop2]>"Puedes comprobar que estás ante la cuenta oficial de Banco Azteca visualizando la Insignia de verificación.  ✅";
+#[output|saludop3]>"Recuerda que nunca te pediremos que proporciones información de tu cuenta por este medio, como No. de Tarjeta o contraseña. Cuida tus datos.";
+#[output|saludop4]>"Te puedo ayudar a: /&&/ /&&/ 1. Consultar tu Saldo /&&/2. Enviar Dinero /&&/ 3. Abrir una cuenta Guardadito Digital /&&/ 4. Resolver tus Dudas  /&&/ 5. Conocer cómo solicitar un Crédito Personal /&&/ /&&/ Escribe el número de la opción que necesites.";
+#[input|envioDinero]>{"regex":["^\\d*$","Lo lamento pero sólo acepto números.","Exediste el número de intentos"],"replace":[]};
+#[output|menuOpcionesCuentas]>"Qué operación quieres realizar /&&/ /&&/ 1. Enviar dinero a cuentas de Banco Azteca 💸 /&&/ 2. Enviar dinero a cuentas de otros bancos 💵 /&&/ /&&/ Escribe el número de la opción que necesites.";
+#[input|cuentasBAZ]>{"regex":["^\\d*$","Lo lamento pero sólo acepto números","Exediste el número de intentos"],"replace":[]};
+#[output|menutxt]>"Para realizar este envío, se utilizarán los datos de tu cuenta asociada a la App de Banco Azteca.";
+#[output|menucuenta]>"Para comenzar, escribe 1 de los siguientes datos de la persona que recibirá el dinero. 💳  /&&/ - Su número de Cuenta (14 números) /&&/ - Su número de Tarjeta (16 números)";
+#[input|cuentaDestino]>{"regex":["([0-9]){13}|([0-9]){14}|([0-9]){16}|([0-9]){18}","Lo lamento pero el número no corresponde a CUENTA, CLABE o TARJETA","Exediste el número de intentos"],"replace":["@upper|","@ac|"], "waiting":["Estamos verificando, por favor espera un momento. 👩🏻‍💻"], "api":["https://qa-interno.apibaz.com:8080/banca_digital/transferencias/v1/comisiones","celular//celular??cuentaDestino//cuentaDestino","request1","$responseComision","", "setApiTo%$responseComision%request2"]};
+#[input|apellidoP]>{"regex":["([a-zA-Z])","Lo lamento pero no acepto números","Exediste el número de intentos"],"replace":["@ac|"]};
+#[output|menuApellidoM]>"Ingresa tu apellido materno";
+#[input|apellidoM]>{"regex":["([a-zA-Z])","Lo lamento pero no acepto números","Exediste el número de intentos"],"replace":["Cortes|Cortez"]};
+print=>["Hola #nombre #apellidoP #apellidoM cómo estas, ya tienes #edad años. es un buen día para continuar trabajando en el simulador"];
+#[output|menuOther]>"Ingresa otro texto";
+#[input|other]>{"regex":["([a-zA-Z])","Lo lamento pero no acepto números","Exediste el número de intentos"],"replace":["@lower|","@R¡[á]|a"]};
+#[output|exit]>"Un final feliz";
+if(#cuentaDestino°=127) then break ?& print=>[""];
+
+
