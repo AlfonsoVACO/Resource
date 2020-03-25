@@ -305,50 +305,62 @@
 			}
 		</style>
 		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+		<style>.form-row{padding: 10px;}</style>
 	</head>
 	<body>
 		<section class="container">
+			<h2>General</h2>
 			<div class="form-horizontal" style="padding:10px;">
 				<div class="form-row">
 					<div class="col">
-						<input type="text" id="principalRex" class="form-control"/>
+						<input type="text" id="principalRex" class="form-control" placeholder="Regex principal"/>
 					</div>
 					<div class="col">
-						<input type="text" id="MensajePrin" class="form-control"/>
+						<input type="text" id="mensajePrin" class="form-control" placeholder="Mensaje de respuesta principal"/>
 					</div>
 				</div>
 			</div>
 			<div class="form-horizontal" style="padding:10px;">
 				<div class="form-row">
 					<div class="col">
-						<input type="text" id="waiting" class="form-control"/>
+						<input type="text" id="mensajePrinErr" class="form-control" placeholder="Mensaje de error por regex principal"/>
+					</div>
+					<div class="col">
+						<input type="text" id="variablePrin" class="form-control" placeholder="Variable para asignar"/>
+					</div>
+				</div>
+			</div>
+			<div class="form-horizontal" style="padding:10px;">
+				<div class="form-row">
+					<div class="col">
+						<input type="text" id="waiting" class="form-control" placeholder="Mensaje de espera"/>
 					</div>
 					<div class="col">
 						<input type="button" id="more-waiting" class="btn btn-info" value="Más"/>
 					</div>
 				</div>
 				<section class="container">
-					<div data-waiting>
-						<div data-waiting-item="354565645564" class="form-row">
-							<input type="checkbox" style="margin: 7px;" for="354565645564"/>
-							<span>Exediste el número de intentos</span>
-						</div>
-						<div data-waiting-item="354565645562" class="form-row">
-							<input type="checkbox" style="margin: 7px;" for="354565645562"/>
-							<span>Espara un momento en lo que valido tu información</span>
-						</div>
-						<div data-waiting-item="354565645561" class="form-row">
-							<input type="checkbox" style="margin: 7px;" for="354565645561"/>
-							<span>Espara un momento en lo que valido tu información</span>
-						</div>
-					</div>
+					<div data-waiting></div>
 					<input type="button" id="del-waiting" class="btn btn-danger" value="Eliminar"/>
 				</section>
 			</div>
 			<div class="form-horizontal" style="padding:10px;">
 				<div class="form-row">
 					<div class="col">
-						<select data-change="#regexs" class="form-control">
+						<select id="reglas" multiple class="form-control">
+							<option value="5bd8a692afaf56744bf7e0fe">Sólo números</option>
+							<option value="5bea0cb6e720fa8f14916a83">Sólo de la a-z y A-Z</option>
+							<option value="5bedb861653f0489e5e87d4c">Es fecha dd/MM/yyyy</option>
+							<option value="5c07f4281ecb7577a673818c">Sólo tiene 12 carácteres</option>
+						</select>
+					</div>
+				</div>
+			</div>
+			<h2>Reemplazar</h2>
+			<div class="form-horizontal" style="padding:10px;">
+				<div class="form-row">
+					<div class="col">
+						<select onchange="javascript:change(this, '#regexs')" class="form-control">
 							<option value="@ac">Quitar todos los acentos</option>
 							<option value="@lower">Todo en minuscula</option>
 							<option value="@upper">Todo en mayuscula</option>
@@ -364,29 +376,22 @@
 					</div>
 				</div>
 				<section class="container">
-					<div data-regexs>
-						<div data-regexs-item="354565645564" class="form-row">
-							<input type="checkbox" style="margin: 7px;" for="354565645564"/>
-							<span>@ac</span>
-						</div>				
-						<div data-regexs-item="354565645562" class="form-row">
-							<input type="checkbox" style="margin: 7px;" for="354565645562"/>
-							<span>@upper</span>
-						</div>
-						<div data-regexs-item="354565645561" class="form-row">
-							<input type="checkbox" style="margin: 7px;" for="354565645561"/>
-							<span>@R¡[A]|a</span>
-						</div>
-					</div>
+					<div data-regexs></div>
 					<input type="button" id="del-regexs" class="btn btn-danger" value="Eliminar"/>
 				</section>
 			</div>
+			<h2>API a consultar (opcional)</h2>
 			<div class="form-horizontal" style="padding:10px;">
 				<div class="form-row">
 					<div class="col">
-						<select data-change="#operations" class="form-control">
-							<option value="valueUno:valueDos">Igual a</option>
-							<option value="valueUno:valueDos">No es igual</option>
+						<input type="text" id="idApi" class="form-control" placeholder="ObjectId"/>
+					</div>
+				</div>
+				<div class="form-row">
+					<div class="col">
+						<select onchange="javascript:change(this, '#operations')" class="form-control" id="isOperation">
+							<option value="valueUno|valueDos">Igual a</option>
+							<option value="valueUno*valueDos">No es igual</option>
 							<option value="{valueUno:valueDos}&{valueUno:valueDos}">comparador y</option>
 							<option value="{valueUno:valueDos}|{valueUno:valueDos}">comparador o</option>
 							<option value="valueUno:valueDos">Cambiar valor a</option>
@@ -400,20 +405,7 @@
 					</div>
 				</div>
 				<section class="container">
-					<div data-operations>
-						<div data-operations-item="354565645564" class="form-row">
-							<input type="checkbox" style="margin: 7px;" for="354565645564"/>
-							<span>$_equals(valueUno:valueDos)</span>
-						</div>				
-						<div data-operations-item="354565645562" class="form-row">
-							<input type="checkbox" style="margin: 7px;" for="354565645562"/>
-							<span>$_notEquals(valueUno:valueDos)</span>
-						</div>
-						<div data-operations-item="354565645561" class="form-row">
-							<input type="checkbox" style="margin: 7px;" for="354565645561"/>
-							<span>$_and({valueUno:valueDos}&{valueUno:valueDos})</span>
-						</div>
-					</div>
+					<div data-operations></div>
 					<input type="button" id="del-operations" class="btn btn-danger" value="Eliminar"/>
 				</section>
 			</div>
@@ -678,13 +670,20 @@
 		
 		$("#more-operations").click( ()=>{
 			if($("#operations").val() != ""){
-				let identity = new Date().getTime();
-				let element = new Elements("div",{ "data-operations-item": identity, class: "form-row"},[
-					new Elements("input",{ type: "checkbox", style: "margin: 7px;", for:identity},[]),
-					new Elements("span",{},[ $("#operations").val() ])
-				]);
-				$("div[data-operations]").append(element);
-				$("#operations").val("");
+			
+				getInputModal("Ingresa el mensaje para validación", ()=>{
+					let mensajeAEnviar = $("#inputModalZu").val();
+					if(mensajeAEnviar != ""){
+						let identity = new Date().getTime();				
+						let element = new Elements("div",{ "data-operations-item": identity, class: "form-row"},[
+							new Elements("input",{ type: "checkbox", style: "margin: 7px;", for:identity},[]),
+							new Elements("span",{},[ getCahngeOperation($("#operations").val()) ]),
+							new Elements("span",{style:"padding: 0px 0px 0px 30px"},[ mensajeAEnviar ])
+						]);
+						$("div[data-operations]").append(element);
+						$("#operations").val("");
+					}
+				},()=>{ });
 			}else{
 				getErrorMessage("Debes hagregar un tipo de remplazable.");
 			}
@@ -722,18 +721,584 @@
 				}
 			});
 		});
-		$("select[data-change]").change( (e)=>{
-			let element = this;
-			console.log( e );
-			let phrase = "select[data-change]";
-			let toSend = $(phrase).attr("data-change");
-			console.log(phrase);
-			console.log(toSend);
-			$(toSend).val( $(phrase).val() );
-		});
+		
+		let change = ( tosendA, inSelect ) => {
+			$(inSelect).val( $(tosendA).val() );
+		};
+		
+		let getCahngeOperation = ( avalue ) => {
+			switch( $("#isOperation").val() ){
+				case "valueUno|valueDos": return "$_equals(" + avalue + ")";
+				case "valueUno*valueDos": return "$_notEquals(" + avalue + ")";
+				case "{valueUno:valueDos}&{valueUno:valueDos}": return "$_and(" + avalue + ")";
+				case "{valueUno:valueDos}|{valueUno:valueDos}": return "$_or(" + avalue + ")";
+				default : return "$_set(" + avalue + ")";
+			}
+		};
 	</script>
 	
 	
 	
 	
+</html>
+
+
+
+
+
+<html>
+	<head>
+		<style>
+			@charset "ISO-8859-1";
+			.modal-window {
+				position: fixed;
+				top: 0;
+				left: 0;
+				width: 100%;
+				height: 100vh;
+				display: flex;
+				z-index: 10000;
+				background-color: rgba(0, 0, 0, .3);
+			}
+
+			.modal-window-image {
+				width: 40px;
+				height: 40px;
+				margin: 0 auto;
+				border-radius: 50%;
+				box-shadow: 0 0 0 2px #48DB71;
+				padding: 11px 10px 2px;
+				margin-bottom: 2em;
+			}
+
+			.modal-window-image-error {
+				width: 40px;
+				height: 40px;
+				border-radius: 50%;
+				margin-bottom: 2em;
+				display: contents;
+			}
+
+			.modal-window-content {
+				background: #fff;
+				margin: auto;
+				border-radius: 5px;
+				max-width: 500px;
+				padding: 20px;
+			}
+
+			.modal-window-panel {
+				position: fixed;
+				top: 0;
+				left: 0;
+				width: 100%;
+				height: 100vh;
+				display: flex;
+				z-index: 10000;
+				background-color: rgba(0, 0, 0, .3);
+			}
+
+			.modal-window-panel-content {
+				background: #fff;
+				margin: auto;
+				border-radius: 5px;
+				padding: 20px;
+				width: 60%;
+			}
+
+			.modal-window-title {
+				text-align: center;
+				margin-bottom: 1rem;
+			}
+
+			.modal-window button {
+				outline: none;
+				border: none;
+				padding: 12px;
+				border-radius: 3px;
+				background: steelblue;
+				color: #fff;
+			}
+
+			.fireworks-window {
+				position: fixed;
+				top: 0;
+				left: 0;
+				width: 100%;
+				height: 100vh;
+				display: flex;
+				z-index: 10000;
+				background-color: rgba(0, 0, 0, .9);
+			}
+
+			.fireworks-content {
+				background: transparent;
+			}
+
+			.modal-window-load {
+				position: fixed;
+				top: 0;
+				left: 0;
+				width: 100%;
+				height: 100vh;
+				display: flex;
+				z-index: 10000;
+				background-color: #fff;
+			}
+
+			.load-content {
+				background: transparent;
+			}
+
+			.modal-window-options {
+				display: grid;
+				grid-column: 2;
+				grid-template-columns: 90px 90px;
+				grid-column-gap: 10px;
+				grid-row: 1;
+				grid-template-rows: auto;
+			}
+
+			.modal-window-options input[value='Aceptar'] {
+				color: #000;
+				border-color: #28a745;
+				background-color: #fff;
+				display: inline-block;
+				text-align: center;
+				white-space: nowrap;
+				vertical-align: middle;
+				-webkit-user-select: none;
+				-moz-user-select: none;
+				-ms-user-select: none;
+				user-select: none;
+				border: 2px solid #28a745;
+				padding: .305rem .05rem;
+				line-height: 1.5;
+				border-radius: .25rem;
+				transition: color .15s ease-in-out, background-color .15s ease-in-out,
+					border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+			}
+
+			.modal-window-options input[value='Cancelar'] {
+				color: #000;
+				border-color: #dc3545;
+				background-color: #fff;
+				display: inline-block;
+				text-align: center;
+				white-space: nowrap;
+				vertical-align: middle;
+				-webkit-user-select: none;
+				-moz-user-select: none;
+				-ms-user-select: none;
+				user-select: none;
+				border: 2px solid #dc3545;
+				padding: .305rem .05rem;
+				line-height: 1.5;
+				border-radius: .25rem;
+				transition: color .15s ease-in-out, background-color .15s ease-in-out,
+					border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+			}
+
+			.notif {
+				border-width: 3px;
+				border-radius: 3px;
+				position: fixed;
+				padding: 15px;
+				z-index: 999;
+				width: 30%;
+				color: #fff;
+				font-weight: 500;
+				bottom: 10px;
+				right: 10px;
+				animation: bounceIn 1s ease-in-out;
+			}
+
+			.notif-success {
+				background-color: #5cb85c;
+			}
+
+			.notif-danger {
+				background-color: #dc3545;
+			}
+
+			.notif-info {
+				background-color: #33b3dd;
+			}
+
+			.notif-warning {
+				background-color: #e2b01b;
+			}
+
+			.notif-default {
+				background-color: #86888a;
+			}
+
+			.notif-container {
+				display: grid;
+				grid-column: 2;
+				grid-template-columns: 30% 70%;
+				grid-column-gap: 10px;
+				grid-row: 1;
+				grid-template-rows: 80px;
+				height: 80px;
+			}
+
+			.notif-img {
+				width: 100%;
+				height: 100%;
+			}
+
+			.notif-img img {
+				height: 100%;
+				width: auto;
+			}
+
+			.notif-text {
+				
+			}
+
+			@
+			keyframes bounceIn { 0% {
+				transform: translateX(1000px);
+			}
+			60%
+			{
+			transform
+			:
+			 
+			translateX
+			(-300px);
+
+							
+			}
+			100%
+			{
+			transform
+			:
+			 
+			translateX
+			(0px);
+
+							
+			}
+			}
+
+
+			/********/
+
+			.tgl {
+				display: none;
+			}
+			.tgl, .tgl:after, .tgl:before, .tgl *, .tgl *:after, .tgl *:before, .tgl + .tgl-btn {
+				box-sizing: border-box;
+			}
+			.tgl::selection, .tgl:after::selection, .tgl:before::selection, .tgl *::selection, .tgl *:after::selection, .tgl *:before::selection, .tgl + .tgl-btn::selection {
+				background: none;
+			}
+			.tgl + .tgl-btn {
+				outline: 0;
+				display: block;
+				width: 4em;
+				height: 2em;
+				position: relative;
+				cursor: pointer;
+				user-select: none;
+			}
+			.tgl + .tgl-btn:after, .tgl + .tgl-btn:before {
+				position: relative;
+				display: block;
+				content: "";
+				width: 50%;
+				height: 100%;
+			}
+			.tgl + .tgl-btn:after {
+				left: 0;
+			}
+			.tgl + .tgl-btn:before {
+				display: none;
+			}
+			.tgl:checked + .tgl-btn:after {
+				left: 50%;
+			}
+			.tgl-ios + .tgl-btn {
+				background: #fbfbfb;
+				border-radius: 2em;
+				padding: 2px;
+				transition: all 0.4s ease;
+				border: 1px solid #e8eae9;
+			}
+			.tgl-ios + .tgl-btn:after {
+				border-radius: 2em;
+				background: #fbfbfb;
+				transition: left 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), padding 0.3s ease, margin 0.3s ease;
+				box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1), 0 4px 0 rgba(0, 0, 0, 0.08);
+			}
+			.tgl-ios + .tgl-btn:hover:after {
+				will-change: padding;
+			}
+			.tgl-ios + .tgl-btn:active {
+				box-shadow: inset 0 0 0 2em #e8eae9;
+			}
+			.tgl-ios + .tgl-btn:active:after {
+				padding-right: 0.8em;
+			}
+			.tgl-ios:checked + .tgl-btn {
+				background: #86d993;
+			}
+			.tgl-ios:checked + .tgl-btn:active {
+				box-shadow: none;
+			}
+			.tgl-ios:checked + .tgl-btn:active:after {
+				margin-left: -0.8em;
+			}
+		</style>
+		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+		<style>.form-row{padding: 10px;}</style>
+	</head>
+	<body>
+		<section class="container">
+			<h2>Regla</h2>
+			<div class="form-horizontal" style="padding:10px;">
+				<div class="form-row">
+					<div class="col">
+						<input type="text" id="principalRegla" class="form-control" placeholder="Nombre regla"/>
+					</div>
+					<div class="col">
+						<input type="text" id="principalRex" class="form-control" placeholder="Regex"/>
+					</div>
+					<div class="col">
+						<input type="text" id="MensajePrin" class="form-control" placeholder="Mensaje de respuesta por falla"/>
+					</div>
+					<div class="col">
+						<input type="button" id="validate" class="btn btn-warning" value="Validar" />
+					</div>
+				</div>
+			</div>
+		</section>		
+	</body>
+	<script src="https://code.jquery.com/jquery-3.4.1.js" integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU=" crossorigin="anonymous"></script>
+	<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+	<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+	
+	<script>	
+		let getCodeStatus = (jqXHR, textStatus) =>{
+			if (jqXHR.status === 0)
+				return 'Error de conexión.';
+			else if (jqXHR.status == 404)
+				return 'Página no encontrada.';
+			else if (jqXHR.status == 405)
+				return 'Método no encontrado: ' + jqXHR.responseText.message;
+			else if (jqXHR.status == 500)
+				return 'Error interno en servidor.';
+			else if (textStatus === 'parsererror')
+				return 'El análisis JSON solicitado fracasó.';
+			else if (textStatus === 'timeout')
+				return 'Tiempo de espera terminado.';
+			else if (textStatus === 'abort')
+				return 'Solicitud ajax cancelada.';
+			else
+				return 'Error desconocido: ' + jqXHR.responseText;
+		};
+
+		let getOptionalDialog = (title, message, fnSuccess, fnFailure )=>{
+			let btnsuccess = new Elements('input',{type:'button', class:'btn btn-success btn-modal-option', value:'Ok'},[ ]);
+			let btnfailure = new Elements('input',{type:'button', class:'btn btn-warning btn-modal-option', value:'Cancel'},[ ]);
+			btnsuccess.addEventListener("click", function(){
+				fnSuccess();
+				$(".modal-window").remove();
+			});
+			btnfailure.addEventListener("click", function(){
+				fnFailure();
+				$(".modal-window").remove();
+			});
+			let e = new Modal('div',{class:'modal-window-content'},[
+				new Elements('h1',{class:'modal-window-title'},[ title ]),
+				new Elements('div',{class:'modal-window-text form-group'},[
+					new Elements('h2',{},[message])
+				]),
+				new Elements('div',{class:'modal-window-options'},[  btnfailure, btnsuccess ])
+			]);
+			document.body.appendChild(e);
+		};
+
+		let getInputModalTextAreaVithValue = (message, valueDefault, fnSuccess, fnFailure )=>{
+			let btnsuccess = new Elements('input',{type:'button', class:'btn btn-success btn-modal-option', value:'Ok'},[ ]);
+			let btnfailure = new Elements('input',{type:'button', class:'btn btn-warning btn-modal-option', value:'Cancel'},[ ]);
+			btnsuccess.addEventListener("click", function(){
+				fnSuccess();
+			});
+			btnfailure.addEventListener("click", function(){
+				fnFailure();
+				$(".modal-window").remove();
+			});
+			let e = new Modal('div',{class:'modal-window-content'},[
+				new Elements('h3',{class:'modal-window-title'},[ message ]),
+				new Elements('div',{class:'modal-window-text form-group'},[
+					new Elements('textarea',{class:'form-control', cols:"100", rows:"10", id:"inputModalTextArea"},[valueDefault])
+				]),
+				new Elements('div',{class:'modal-window-options'},[  btnfailure, btnsuccess ])
+			]);
+			document.body.appendChild(e);
+		};
+
+		let getInputModalTextArea = (message, fnSuccess, fnFailure )=>{
+			let btnsuccess = new Elements('input',{type:'button', class:'btn btn-success btn-modal-option', value:'Ok'},[ ]);
+			let btnfailure = new Elements('input',{type:'button', class:'btn btn-warning btn-modal-option', value:'Cancel'},[ ]);
+			btnsuccess.addEventListener("click", function(){
+				fnSuccess();
+			});
+			btnfailure.addEventListener("click", function(){
+				fnFailure();
+				$(".modal-window").remove();
+			});
+			let e = new Modal('div',{class:'modal-window-content'},[
+				new Elements('h3',{class:'modal-window-title'},[ message ]),
+				new Elements('div',{class:'modal-window-text form-group'},[
+					new Elements('textarea',{class:'form-control', cols:"100", rows:"10", id:"inputModalTextArea"},[])
+				]),
+				new Elements('div',{class:'modal-window-options'},[  btnfailure, btnsuccess ])
+			]);
+			document.body.appendChild(e);
+		};
+
+		let getInputModal = (message, fnSuccess, fnFailure )=>{
+			let btnsuccess = new Elements('input',{type:'button', class:'btn btn-success btn-modal-option', value:'Ok'},[ ]);
+			let btnfailure = new Elements('input',{type:'button', class:'btn btn-warning btn-modal-option', value:'Cancel'},[ ]);
+			btnsuccess.addEventListener("click", function(){
+				fnSuccess();
+				$(".modal-window").remove();
+			});
+			btnfailure.addEventListener("click", function(){
+				fnFailure();
+				$(".modal-window").remove();
+			});
+			let e = new Modal('div',{class:'modal-window-content'},[
+				new Elements('h1',{class:'modal-window-title'},[ message ]),
+				new Elements('div',{class:'modal-window-text form-group'},[
+					new Elements('input',{type:'text',class:'form-control', id:"inputModalZu"},[])
+				]),
+				new Elements('div',{class:'modal-window-options'},[  btnfailure, btnsuccess ])
+			]);
+			document.body.appendChild(e);
+		};
+
+
+
+		let getInput = ()=>{
+			let btnsuccess = new Elements('input',{type:'button', class:'btn btn-success btn-modal-option', value:'Ok'},[ ]);
+			let btnfailure = new Elements('input',{type:'button', class:'btn btn-warning btn-modal-option', value:'Cancel'},[ ]);
+			btnsuccess.addEventListener("click", function(){
+				fnSuccess();
+				$(".modal-window").remove();
+			});
+			btnfailure.addEventListener("click", function(){
+				$(".modal-window").remove();
+			});
+			let e = new Modal('div',{class:'modal-window-content'},[
+				new Elements('h1',{class:'modal-window-title'},[ "Find word" ]),
+				new Elements('div',{class:'modal-window-text form-group'},[
+					new Elements('input',{type:'text',class:'form-control', id:"inputSearch"},[])
+				]),
+				new Elements('div',{class:'modal-window-options'},[  btnfailure, btnsuccess ])
+			]);
+			document.body.appendChild(e);
+		};
+
+		let fnSuccess = ()=>{
+			var verifica = window.find($("#inputSearch").val());
+			getSuccessfulMessageWithText(verifica);
+		};
+
+		let getSuccessfulMessageWithText = ( text ) => {
+			let e = new Modal('div',{class:'modal-window-content'},[
+				new Elements('div',{class:'modal-window-image'},["<svg viewBox=\"0 0 32 32\" style=\"fill:#48DB71\"><path d=\"M1 14 L5 10 L13 18 L27 4 L31 8 L13 26 z\"></path></svg>"]),
+				new Elements('h1',{class:'modal-window-title'},[ "¡LISTO!" ]),
+				new Elements('p',{class:'modal-window-text form-group'},[ text ]) ]);
+			document.body.appendChild(e);
+		};
+
+		let getErrorMessage = ( error ) => {
+			let e = new Modal('div',{class:'modal-window-content'},[
+				new Elements('div',{class:'modal-window-image-error'},['<svg enable-background="new 0 0 512 512" id="Layer_1" viewBox="0 0 512 512" style="height: 30px;width: 30px;float: right;"><linearGradient gradientUnits="userSpaceOnUse" id="SVGID_1_" x1="256" x2="256" y1="512" y2="-9.094947e-013"><stop offset="0" style="stop-color:#E73827"></stop><stop offset="1" style="stop-color:#F85032"></stop></linearGradient><circle cx="256" cy="256" fill="url(#SVGID_1_)" r="256"></circle><path d="M268.7,256l119.6-119.6c3.2-3.2,3.2-8.3,0-11.4c-3.2-3.2-8.3-3.2-11.4,0L257.2,244.6L135.1,122.5  c-3.2-3.2-8.3-3.2-11.4,0c-3.2,3.2-3.2,8.3,0,11.4L245.8,256L123.7,378.1c-3.2,3.2-3.2,8.3,0,11.4c1.6,1.6,3.7,2.4,5.7,2.4  c2.1,0,4.1-0.8,5.7-2.4l122.1-122.1l119.6,119.6c1.6,1.6,3.7,2.4,5.7,2.4c2.1,0,4.1-0.8,5.7-2.4c3.2-3.2,3.2-8.3,0-11.4L268.7,256z" fill="#FFFFFF"></path></svg>']),
+				new Elements('h1',{class:'modal-window-title'},[ "¡UPS!" ]),
+				new Elements('p',{class:'modal-window-text form-group'},[error])
+			]);
+			document.body.appendChild(e);
+		};
+			
+		var __extends = (this && this.__extends) || (function () {
+			var extendStatics = function (d, b) {
+				extendStatics = Object.setPrototypeOf ||
+					({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+					function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+				return extendStatics(d, b);
+			}
+			return function (d, b) {
+				extendStatics(d, b);
+				function __() { this.constructor = d; }
+				d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+			};
+		})();
+		var Elements = /** @class */ (function(){
+			function Elements( type, attributes, children ){
+				return this.createCustomElement( type, attributes, children );
+			}
+				
+			Elements.prototype.createCustomElement = function( type, attributes, children ){
+				var element = document.createElement( type );
+				if(children !== undefined) this.addChildren( element, children );
+				this.addAttributes(element, attributes);
+				return element;
+			};
+				
+			Elements.prototype.addAttributes = function(element, attrObj){
+				for(let attr in attrObj){
+					if(attrObj.hasOwnProperty( attr )) element.setAttribute( attr, attrObj[attr] );
+				}
+			};
+					
+			Elements.prototype.addChildren = function(element, children){
+				for(var i = 0; i < children.length; i++){
+					if(children[i].nodeType== 1 || children[i].nodetype==11) element.appendChild(children[i]);
+					else element.innerHTML += children[i]
+				}
+			};
+			return Elements;
+		}());
+				
+		var Modal = /** @class */ (function (_super) {
+			__extends(Modal, _super);
+			function Modal(type, attributes, children) {
+				var _this = _super.call(this, 'div', { class: 'modal-window' }, []) || this;
+				Elements.prototype.addChildren(_this, [Elements.prototype.createCustomElement(type, attributes, children)]);
+				_this.addEventListener('click', function (e) {
+					if (e.target === this)
+						Modal.prototype.closeModal.call(this);
+				});
+				return _this;
+			}
+			Modal.prototype.closeModal = function () {
+				document.body.removeChild(this);
+			};
+			return Modal;
+		}(Elements));
+		
+		
+	</script>
+
+	<script>
+		$("#validate").click( () => {
+			getInputModal("Ingresa tu texto a validar", ()=>{
+				let cadenaValidar = $("#inputModalZu").val();
+				let regexToValid =  $("#principalRex").val();
+				let coincidencias = new RegExp( regexToValid );
+				if(coincidencias.test(cadenaValidar)){
+					$("#validate").removeClass("btn-warning").removeClass("btn-danger").addClass("btn-success");
+				}else{
+					$("#validate").removeClass("btn-warning").removeClass("btn-success").addClass("btn-danger");
+				}
+			}, ()=>{});
+		});
+	</script>	
 </html>
