@@ -308,25 +308,29 @@
 		<style>.form-row{padding: 10px;}</style>
 	</head>
 	<body>
-		<section class="container">
+		<section class="container" data-send-val>
 			<h2>General</h2>
 			<div class="form-horizontal" style="padding:10px;">
 				<div class="form-row">
 					<div class="col">
-						<input type="text" id="principalRex" class="form-control" placeholder="Regex principal"/>
-					</div>
-					<div class="col">
-						<input type="text" id="mensajePrin" class="form-control" placeholder="Mensaje de respuesta principal"/>
+						<textarea type="text" id="main_mensaje" data-valid class="form-control" rows="8"></textarea>
 					</div>
 				</div>
 			</div>
 			<div class="form-horizontal" style="padding:10px;">
 				<div class="form-row">
 					<div class="col">
-						<input type="text" id="mensajePrinErr" class="form-control" placeholder="Mensaje de error por regex principal"/>
+						<input type="text" id="main_regex" class="form-control" placeholder="Regex principal"/>
+					</div>
+				</div>
+			</div>
+			<div class="form-horizontal" style="padding:10px;">
+				<div class="form-row">
+					<div class="col">
+						<input type="text" id="main_failRegex" class="form-control" placeholder="Mensaje de error por regex principal"/>
 					</div>
 					<div class="col">
-						<input type="text" id="variablePrin" class="form-control" placeholder="Variable para asignar"/>
+						<input type="text" id="variable" class="form-control" placeholder="Variable para asignar"/>
 					</div>
 				</div>
 			</div>
@@ -373,6 +377,7 @@
 					</div>
 					<div class="col">
 						<input type="button" id="more-regexs" class="btn btn-info" value="Más"/>
+						<input type="button" onclick="javascript:temporal();" class="btn btn-info" value="Test"/>
 					</div>
 				</div>
 				<section class="container">
@@ -384,7 +389,7 @@
 			<div class="form-horizontal" style="padding:10px;">
 				<div class="form-row">
 					<div class="col">
-						<input type="text" id="idApi" class="form-control" placeholder="ObjectId"/>
+						<input type="text" id="api_id" class="form-control" placeholder="ObjectId"/>
 					</div>
 				</div>
 				<div class="form-row">
@@ -408,6 +413,14 @@
 					<div data-operations></div>
 					<input type="button" id="del-operations" class="btn btn-danger" value="Eliminar"/>
 				</section>
+			</div>
+			<h2>Guardar!!!</h2>
+			<div class="form-horizontal" style="padding:10px;">
+				<div class="form-row">
+					<div class="col">
+						<input type="button" id="guardar" class="btn btn-success" value="Guardar" />
+					</div>
+				</div>
 			</div>
 		</section>
 		
@@ -677,8 +690,8 @@
 						let identity = new Date().getTime();				
 						let element = new Elements("div",{ "data-operations-item": identity, class: "form-row"},[
 							new Elements("input",{ type: "checkbox", style: "margin: 7px;", for:identity},[]),
-							new Elements("span",{},[ getCahngeOperation($("#operations").val()) ]),
-							new Elements("span",{style:"padding: 0px 0px 0px 30px"},[ mensajeAEnviar ])
+							new Elements("span",{"data-model":""},[ getCahngeOperation($("#operations").val()) ]),
+							new Elements("span",{"data-message":"", style:"padding: 0px 0px 0px 30px"},[ mensajeAEnviar ])
 						]);
 						$("div[data-operations]").append(element);
 						$("#operations").val("");
@@ -735,8 +748,45 @@
 				default : return "$_set(" + avalue + ")";
 			}
 		};
-	</script>
-	
+
+		let convertToArrString = ( arrayslp ) => {
+			let newArray = [];
+			$.each(arrayslp, (item, value) => {
+				newArray.push( $(value).text() );
+			});
+			return newArray;
+		};
+
+		$("#guardar").click( () => {
+			let validacionesFinales = $("section[data-send-val]").find("input[data-valid]|textarea[data-valid]");
+			let isOk = true;
+			$.each(validacionesFinales, (item, value) => {
+				if($(value).val() == "" || $(value).val() === ""){
+					isOk = false;
+				}
+			});
+			if(isOk){
+				let modelo = {
+					"main":{
+						"mensaje": $("#main_mensaje").val(),
+						"regex": $("#main_regex").val(),
+						"failRegex": $("#main_failRegex").val()
+					},
+					"hasTry": "Excediste el número de intentos",
+					"variable": $("#variable").val(),
+					"replace": convertToArrString($("div[data-regexs]").find("span")),
+					"waiting": convertToArrString($("div[data-waiting]").find("span")),
+					"api":{
+						"id": $("#api_id").val(),
+						"model": convertToArrString($("div[data-operations]").find("span[data-model]") ),
+						"respuestas": convertToArrString($("div[data-operations]").find("span[data-message]"))
+					},
+					"reglas": $("#reglas").val()
+				};
+				console.log(modelo);
+			}
+		});
+	</script>	
 	
 	
 	
